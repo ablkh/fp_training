@@ -33,6 +33,7 @@ trait Applicative[F[_]] extends Foncteur[F] {
     override def point[A](a: A): F[G[A]] = self.point(AG.point(a))
   }
 
+
 }
 
 object Applicative {

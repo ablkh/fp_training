@@ -27,9 +27,13 @@ object StringWriter {
   lazy val stringWriterMonad = new Monade[StringWriter] {
 
     //TODO EXO9
-    override def flatMap[A, B](a: StringWriter[A])(f: (A) => StringWriter[B]): StringWriter[B] = ???
+    override def flatMap[A, B](a: StringWriter[A])(f: (A) => StringWriter[B]): StringWriter[B] = {
+      val tmpWriter = f (a.value)
+      tmpWriter.copy(log = ""+a.log+System.lineSeparator()+tmpWriter.log)
+    }
 
     override def point[A](a: A): StringWriter[A] = StringWriter(a, s"$now: setting to: $a")
+
   }
 }
 
@@ -61,7 +65,10 @@ object JsonWriter {
   lazy val jsonWriterMonad = new Monade[JsonWriter] {
 
     //TODO EXO9
-    override def flatMap[A, B](a: JsonWriter[A])(f: (A) => JsonWriter[B]): JsonWriter[B] = ???
+    override def flatMap[A, B](a: JsonWriter[A])(f: (A) => JsonWriter[B]): JsonWriter[B] = {
+      val tmpJsonWritter = f (a.value)
+      tmpJsonWritter.copy(log = tmpJsonWritter.log.prepend(a.log))
+    }
 
     override def point[A](a: A): JsonWriter[A] = JsonWriter(a, JsArray(
       Seq(Json.obj(
